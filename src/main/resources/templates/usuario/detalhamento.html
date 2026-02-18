@@ -1,0 +1,163 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Desafio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script th:src="@{/js/util.js}"></script>
+    <script>
+        function desistir(){
+            
+        }
+        
+        function confirmar(){
+            if(document.getElementById("pedidos").children.length > 0){
+                alert("Não é possível excluir um usuário que possui pedidos cadastrados")
+                return;
+            }
+
+            const dados = {
+                cdUsuario: document.getElementById('cdUsuario').value
+            };
+            
+            //window.location.href='/usuario/excluir?cdUsuario=' + document.getElementById("cdUsuario").value;
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/usuario/excluir?cdUsuario='+ document.getElementById("cdUsuario").value;
+
+            //form.appendChild(document.getElementById("cdUsuario"));
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+    </script>
+</head>
+  <body style="height: 100%; width: 100%">
+    <main class="d-flex flex-nowrap">
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="display: flex; min-height: 100vh; width: 280px;"> <a href="#"
+            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"> <svg
+                class="bi pe-none me-2" width="40" height="32" aria-hidden="true">
+            </svg> <span class="fs-4">Desafio</span> </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item"> <a href="/" class="nav-link active" aria-current="page"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                    <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
+                    </svg>
+                    <svg class="bi pe-none me-2"
+                        width="16" height="16" aria-hidden="true">
+                    </svg>
+                    Home
+                </a> 
+            </li>
+            <li> <a href="/usuario" class="nav-link text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg"  width="16" height="16"  fill="currentColor" class="bi bi-file-person-fill" viewBox="0 0 16 16">
+                    <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2m-1 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-3 4c2.623 0 4.146.826 5 1.755V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-1.245C3.854 11.825 5.377 11 8 11"/>
+                    </svg>
+                    <svg class="bi pe-none me-2" width="16" height="16"
+                        aria-hidden="true">
+                    </svg>
+                    Usuario
+                </a> 
+            </li>
+            <li> <a href="/produto" class="nav-link text-white"> 
+                    <svg xmlns="http://www.w3.org/2000/svg"  width="16" height="16"  fill="currentColor" class="bi bi-file-person-fill" viewBox="0 0 16 16">
+                    <path d="M3.75 0a1 1 0 0 0-.8.4L.1 4.2a.5.5 0 0 0-.1.3V15a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4.5a.5.5 0 0 0-.1-.3L13.05.4a1 1 0 0 0-.8-.4zM15 4.667V5H1v-.333L1.5 4h6V1h1v3h6z"/>
+                    </svg>
+                    <svg class="bi pe-none me-2" width="16" height="16"
+                        aria-hidden="true">
+                    </svg>
+                    Produto
+                </a> 
+            </li>
+            <li> <a href="/pedido" class="nav-link text-white">  
+                    <svg xmlns="http://www.w3.org/2000/svg"  width="16" height="16"  fill="currentColor" class="bi bi-file-person-fill" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                    </svg>
+                    <svg class="bi pe-none me-2" width="16" height="16"
+                        aria-hidden="true">
+                    </svg>
+                    Pedido
+                </a> 
+            </li>
+        </ul>
+    </div>
+    <div class="p-5 mb-4 bg-body-tertiary rounded-3" style="width: 100%">
+        <div class="container-fluid py-5">            
+            <h3>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb p-3 bg-body-tertiary rounded-3">
+                        <li class="breadcrumb-item"> <a class="link-body-emphasis fw-semibold text-decoration-none" href="/">
+                            <svg class="bi" width="20" height="20" aria-hidden="true">
+                            <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
+                            </svg>
+                        </a>
+                        <li class="breadcrumb-item "> <a class="link-body-emphasis fw-semibold text-decoration-none" href="/usuario">Usuários</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page" th:text="${exclusao? 'Exclusão' : 'Detalhamento'}">
+                            Detalhamento
+                        </li>
+                    </ol>
+                </nav>
+            </h3>
+            <br>
+            <div  class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Código</span>
+                <input id="cdUsuario"  th:value="${usuario.cdUsuario}" readonly onchange="limparCodigo()" type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div  class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Nome</span>
+                <input id="nmUsuario"  th:value="${usuario.nmUsuario}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div  class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">E-Mail</span>
+                <input id="email"  th:value="${usuario.email}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div  class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Cadastro</span>
+                <input id="dtCadastro" th:value="${#dates.format(usuario.dtCadastro, 'dd/MM/yyyy')}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <br>
+            <br>
+            <h5>Pedidos</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Código </th>
+                        <th>Tipo</th>
+                        <th>Data</th>
+                        <th>Detalhar</th>
+                    </tr>
+                </thead>
+                <tbody id="pedidos">
+                    <tr th:each="u : ${pedidos}">
+                        <td th:text="${u.cdUsuario}">1</td>
+                        <td th:text="${u.nmUsuario}">Retirada</td>
+                        <td th:text="${u.email}">15/02/2026</td>
+                        <td th:text="${u.dtCadastro}"><a href="/pedido/detalhar?codigo=1"> Detalhar</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <footer class="pt-4 my-md-5 pt-md-5 border-top">
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <div  th:if="${exclusao}" style="gap: 15%;">
+                        <button type="button" class="btn-primary btn " onclick="window.location.href='/usuario'">Desistir</button>
+                        <button type="button" class="btn-primary btn " onclick="confirmar()">Confirmar</button>
+                    </div>
+                    <div th:unless="${exclusao}">
+                        <button type="button" class="btn-primary btn " onclick="window.location.href='/usuario'">Voltar</button>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <div>
+        
+    </div>
+    </main>
+  </body>
+</html>
