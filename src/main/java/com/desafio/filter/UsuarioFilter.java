@@ -1,7 +1,6 @@
 package com.desafio.filter;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class UsuarioFilter extends Filter{

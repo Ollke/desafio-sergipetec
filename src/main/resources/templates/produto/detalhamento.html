@@ -18,16 +18,16 @@
             }
 
             const dados = {
-                cdUsuario: document.getElementById('cdUsuario').value
+                cdProduto: document.getElementById('cdProduto').value
             };
             
-            //window.location.href='/usuario/excluir?cdUsuario=' + document.getElementById("cdUsuario").value;
+            //window.location.href='/produto/excluir?cdProduto=' + document.getElementById("cdProduto").value;
             
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/usuario/excluir?cdUsuario='+ document.getElementById("cdUsuario").value;
+            form.action = '/produto/excluir?cdProduto='+ document.getElementById("cdProduto").value;
 
-            //form.appendChild(document.getElementById("cdUsuario"));
+            //form.appendChild(document.getElementById("cdProduto"));
             
             document.body.appendChild(form);
             form.submit();
@@ -95,7 +95,7 @@
                             <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
                             </svg>
                         </a>
-                        <li class="breadcrumb-item "> <a class="link-body-emphasis fw-semibold text-decoration-none" href="/usuario">Usuários</a>
+                        <li class="breadcrumb-item "> <a class="link-body-emphasis fw-semibold text-decoration-none" href="/produto">Produtos</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page" th:text="${exclusao? 'Exclusão' : 'Detalhamento'}">
                             Detalhamento
@@ -106,19 +106,27 @@
             <br>
             <div  class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Código</span>
-                <input id="cdUsuario"  th:value="${usuario.cdUsuario}" readonly onchange="limparCodigo()" type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <input id="cdProduto"  th:value="${produto.id.cdProduto}" readonly onchange="limparCodigo()" type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
             </div>
             <div  class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Nome</span>
-                <input id="nmUsuario"  th:value="${usuario.nmUsuario}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <input id="nmProduto"  th:value="${produto.nmProduto}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
             </div>
             <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">E-Mail</span>
-                <input id="email"  th:value="${usuario.email}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Descrição</span>
+                <textarea id="dsProduto"  th:text="${produto.dsProduto}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default"></textarea>
+            </div>
+            <div  class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Quantidade</span>
+                <input id="qtProduto"  th:value="${produto.qtProduto}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div  class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Valor</span>
+                <input id="vlProduto"  th:value="${produto.vlProduto}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
             </div>
             <div  class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Cadastro</span>
-                <input id="dtCadastro" th:value="${#dates.format(usuario.dtCadastro, 'dd/MM/yyyy')}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <input id="dtCadastro" th:value="${#dates.format(produto.dtCadastro, 'dd/MM/yyyy')}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
             </div>
             <br>
             <br>
@@ -127,31 +135,32 @@
                 <thead>
                     <tr>
                         <th>Código </th>
-                        <th>Tipo</th>
                         <th>Data</th>
-                        <th>Detalhar</th>
+                        <th>#</th>
                     </tr>
                 </thead>
                 <tbody id="pedidos">
-                    <tr th:each="u : ${pedidos}">
-                        <td th:text="${u.cdUsuario}">1</td>
-                        <td th:text="${u.nmUsuario}">Retirada</td>
-                        <td th:text="${u.email}">15/02/2026</td>
-                        <td th:text="${u.dtCadastro}"><a href="/pedido/detalhar?codigo=1"> Detalhar</a></td>
+                    <tr th:each="p : ${pedidos}">
+                        <td th:text="${p.cdProduto}">1</td>
+                        <td th:text="${#dates.format(p.dtCadastro, 'dd/MM/yyyy')}">01/01/2026</td>
+                        <td ><a th:onclick="${'abrirJanelaAuxiliar(' + p.id.cdProduto + ')'}"> Detalhar</a></td>
                     </tr>
                 </tbody>
             </table>
             <br>
             <footer class="pt-4 my-md-5 pt-md-5 border-top">
                 <div  th:if="${exclusao}" style="display: flex; justify-content: center; align-items: center; gap: 15%;">
-                    <button type="button" class="btn-primary btn " onclick="window.location.href='/usuario'">Desistir</button>
+                    <button type="button" class="btn-primary btn " onclick="window.location.href='/produto'">Desistir</button>
                     <button type="button" class="btn-primary btn " onclick="confirmar()">Confirmar</button>
                 </div>
                 <div th:unless="${exclusao}" style="display: flex; justify-content: center; align-items: center;">
-                    <button type="button" class="btn-primary btn " onclick="window.location.href='/usuario'">Voltar</button>
+                    <button type="button" class="btn-primary btn " onclick="window.location.href='/produto'">Voltar</button>
                 </div>
             </footer>
         </div>
+    </div>
+    <div>
+        
     </div>
     </main>
   </body>

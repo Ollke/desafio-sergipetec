@@ -11,25 +11,31 @@ function submeterFormulario(caminho, tipo){
     form.appendChild(input);
     
     try {
-        let inputsArray = Array.from(document.querySelectorAll("input"));
-        for (let input of inputsArray) {
-
-            if(input.type == 'radio' && validarRadio(input.name)){
-                form.appendChild(input);
-            }else{
-                form.appendChild(input);
+        let componentes = Array.from(document.querySelectorAll("input"));
+        for (let componente of componentes) {
+            if(componente.type == 'radio' && !validarRadio(componente.name)){
+                continue;
             }
-        }
 
-        inputsArray = Array.from(document.querySelectorAll("select"));
-        for (let select of inputsArray) {            
             let input = document.createElement('input');
             input.type = 'hidden';
-            input.name = select.name;
-            input.value = select.value;
+            input.name = componente.name;
+            input.value = componente.value;
 
             form.appendChild(input);
         }
+
+        componentes = Array.from(document.querySelectorAll("select"));
+        componentes = componentes.concat( Array.from(document.querySelectorAll("textarea")) );
+        for (let componente of componentes) {            
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = componente.name;
+            input.value = componente.value;
+
+            form.appendChild(input);
+        }
+
     }catch {
 
     }
@@ -43,9 +49,34 @@ function validarRadio(name, exibirAlert){
 
     if(radio == null){
         if(exibirAlert)
-            alert("Selecione um registro")
+            exibirMensagem("Selecione um registro")
         return false;
     }
 
      return true;
+}
+
+async function exibirMensagem(msg){
+    Swal.fire({
+        text: msg,
+        icon: 'info',
+        confirmButtonText: 'OK'
+    });
+}
+
+
+async function solicitarConfirmacao(msg) { 
+    var resultado = await Swal.fire({
+        text: msg,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar'
+    });
+ 
+    return resultado.isConfirmed;
+}
+
+function abrirJanelaAuxiliar(rota){
+    window.open(rota, 'janelaAuxiliar', 'width=1500,height=800,resizable=yes,scrollbars=yes');
 }

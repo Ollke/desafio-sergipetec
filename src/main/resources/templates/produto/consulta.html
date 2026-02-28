@@ -5,32 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Desafio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:src="@{/js/util.js}"></script>
     <script>
-        function desistir(){
-            
+        function limparCodigo(){
+            let cdProduto = document.getElementById("cdProduto").value;
+
+            if(cdProduto != ''){
+                if(parseInt(cdProduto) < 1){
+                    document.getElementById("cdProduto").value = '';
+                }
+            }
         }
         
-        function confirmar(){
-            if(document.getElementById("pedidos").children.length > 0){
-                alert("Não é possível excluir um usuário que possui pedidos cadastrados")
+        function exibirDelhamento(){
+            if(!validarRadio("chave_primaria", true)){
+                return;
+            }
+            
+            window.location.href='/produto/detalhar?cdProduto=' + document.querySelector('input[name="chave_primaria"]:checked').value;
+        }
+        
+        function exibirInclusao(){
+            submeterFormulario('/produto/cadastro', "GET")
+        }
+        
+        function exibirAlteracao(){
+            if(!validarRadio("chave_primaria", true)){
                 return;
             }
 
-            const dados = {
-                cdUsuario: document.getElementById('cdUsuario').value
-            };
-            
-            //window.location.href='/usuario/excluir?cdUsuario=' + document.getElementById("cdUsuario").value;
-            
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/usuario/excluir?cdUsuario='+ document.getElementById("cdUsuario").value;
+            window.location.href='/produto/alterar?cdProduto=' + document.querySelector('input[name="chave_primaria"]:checked').value;
+        }
+        
+        function exibirExclusao(){
+            if(!validarRadio("chave_primaria", true)){
+                return;
+            }
 
-            //form.appendChild(document.getElementById("cdUsuario"));
-            
-            document.body.appendChild(form);
-            form.submit();
+            window.location.href='/produto/excluir?cdProduto=' + document.querySelector('input[name="chave_primaria"]:checked').value;
+        }
+
+
+        function localizar(){
+            submeterFormulario('/produto/localizar', "POST")
         }
 
     </script>
@@ -43,7 +62,8 @@
             </svg> <span class="fs-4">Desafio</span> </a>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item"> <a href="/" class="nav-link active" aria-current="page"> 
+            <li class="nav-item"> 
+                <a href="/" class="nav-link active" aria-current="page">  
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
                     <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
                     </svg>
@@ -86,7 +106,7 @@
         </ul>
     </div>
     <div class="p-5 mb-4 bg-body-tertiary rounded-3" style="width: 100%">
-        <div class="container-fluid py-5">            
+        <div class="container-fluid py-5">
             <h3>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb p-3 bg-body-tertiary rounded-3">
@@ -95,63 +115,74 @@
                             <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
                             </svg>
                         </a>
-                        <li class="breadcrumb-item "> <a class="link-body-emphasis fw-semibold text-decoration-none" href="/usuario">Usuários</a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page" th:text="${exclusao? 'Exclusão' : 'Detalhamento'}">
-                            Detalhamento
+                        <li class="breadcrumb-item active" aria-current="page">
+                            Produtos
                         </li>
                     </ol>
                 </nav>
             </h3>
             <br>
+            <form id="formulario">
             <div  class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Código</span>
-                <input id="cdUsuario"  th:value="${usuario.cdUsuario}" readonly onchange="limparCodigo()" type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <input id="cdProduto" name="cdProduto" th:value="${cdProduto}" onchange="limparCodigo()" type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
             </div>
             <div  class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Nome</span>
-                <input id="nmUsuario"  th:value="${usuario.nmUsuario}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <input id="nmProduto" name="nmProduto" th:value="${nmProduto}" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
             </div>
             <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">E-Mail</span>
-                <input id="email"  th:value="${usuario.email}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Ordenação</span>
+                <select name="nmAtributoOrdenacao" class="form-select" aria-label="Default select" style="width: 50%;">
+                    <option value="PRODUTO_CD"  th:selected="${nmAtributoOrdenacao == 'PRODUTO_CD'}">Código</option>
+                    <option value="PRODUTO_NM" th:selected="${nmAtributoOrdenacao == 'PRODUTO_NM'}">Nome</option>
+                    <option value="ESTOQUE_QT" th:selected="${nmAtributoOrdenacao == 'ESTOQUE_QT'}">Estoque</option>
+                    <option value="CADASTRO_DT" th:selected="${nmAtributoOrdenacao == 'CADASTRO_DT'}">Cadastro</option>
+                </select>
+                <select class="form-select" id="tpOrdenacao" name="tpOrdenacao">
+                    <option value="ASC" th:selected="${tpOrdenacao == 'ASC'}">Crescente</option>
+                    <option value="DESC" th:selected="${tpOrdenacao == 'DESC'}">Decrescente</option>
+                </select>
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="localizar()">Localizar</button>
             </div>
-            <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Cadastro</span>
-                <input id="dtCadastro" th:value="${#dates.format(usuario.dtCadastro, 'dd/MM/yyyy')}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
-            </div>
+            </form>
             <br>
             <br>
-            <h5>Pedidos</h5>
             <table class="table">
                 <thead>
                     <tr>
                         <th>Código </th>
-                        <th>Tipo</th>
-                        <th>Data</th>
-                        <th>Detalhar</th>
+                        <th>Nome</th>
+                        <th>Cadastro</th>
+                        <th>Estoque</th>
+                        <th>Valor</th>
+                        <th style="text-align: end;">#</th>
                     </tr>
                 </thead>
-                <tbody id="pedidos">
-                    <tr th:each="u : ${pedidos}">
-                        <td th:text="${u.cdUsuario}">1</td>
-                        <td th:text="${u.nmUsuario}">Retirada</td>
-                        <td th:text="${u.email}">15/02/2026</td>
-                        <td th:text="${u.dtCadastro}"><a href="/pedido/detalhar?codigo=1"> Detalhar</a></td>
+                <tbody>
+                    <tr scope="row" th:each="p: ${produtos}">
+                        <td th:text="${p.id.cdProduto}">1</td>
+                        <td th:text="${p.nmProduto}">Nome do Produto</td>
+                        <td th:text="${#dates.format(p.dtCadastro, 'dd/MM/yyyy')}">01/01/2026</td>
+                        <td th:text="${p.qtProduto}">Estoque do Produto</td>
+                        <td th:text="${p.vlProduto}">Estoque do Produto</td>
+                        <td style="text-align: end;">
+                            <a th:href="${'/produto/detalhar?cdProduto=' + p.id.cdProduto}">Detalhar</a> |
+                            <a th:href="${'/produto/alterar?cdProduto=' + p.id.cdProduto}">Alterar</a> |
+                            <a th:href="${'/produto/excluir?cdProduto=' + p.id.cdProduto}">Excluir</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
-            <br>
             <footer class="pt-4 my-md-5 pt-md-5 border-top">
-                <div  th:if="${exclusao}" style="display: flex; justify-content: center; align-items: center; gap: 15%;">
-                    <button type="button" class="btn-primary btn " onclick="window.location.href='/usuario'">Desistir</button>
-                    <button type="button" class="btn-primary btn " onclick="confirmar()">Confirmar</button>
-                </div>
-                <div th:unless="${exclusao}" style="display: flex; justify-content: center; align-items: center;">
-                    <button type="button" class="btn-primary btn " onclick="window.location.href='/usuario'">Voltar</button>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 15%;">
+                    <button type="button" class="btn-primary btn " onclick="window.location.href='/produto/cadastro'">Incluir</button>
                 </div>
             </footer>
         </div>
+    </div>
+    <div>
+        
     </div>
     </main>
   </body>

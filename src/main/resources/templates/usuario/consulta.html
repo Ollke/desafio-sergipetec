@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Desafio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:src="@{/js/util.js}"></script>
     <script>
         function limparCodigo(){
@@ -78,7 +80,7 @@
                     <svg class="bi pe-none me-2" width="16" height="16"
                         aria-hidden="true">
                     </svg>
-                    Usuario
+                    Usuário
                 </a> 
             </li>
             <li> <a href="/produto" class="nav-link text-white"> 
@@ -135,7 +137,7 @@
             </div>
             <div  class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Ordenação</span>
-                <select name="nmAtributoOrdenacao" class="form-select" aria-label="Default select" style="width: 50%;">
+                <select name="nmAtributoOrdenacao" class="form-select" aria-label="Default select" style="width: 50%;" >
                     <option value="USUARIO_CD"  th:selected="${nmAtributoOrdenacao == 'USUARIO_CD'}">Código</option>
                     <option value="USUARIO_NM" th:selected="${nmAtributoOrdenacao == 'USUARIO_NM'}">Nome</option>
                     <option value="EMAIL" th:selected="${nmAtributoOrdenacao == 'EMAIL'}">E-Mail</option>
@@ -153,37 +155,33 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Código </th>
                         <th>Nome</th>
                         <th>E-Mail</th>
                         <th>Cadastro</th>
+                        <th style="text-align: end;">#</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr scope="row" th:each="u: ${usuarios}">
-                        <td>
-                            <input class="form-check-input" type="radio" name="chave_primaria" th:value="${u.cdUsuario}">
-                        </td>
                         <td th:text="${u.cdUsuario}">1</td>
                         <td th:text="${u.nmUsuario}">Nome do Usuário</td>
                         <td th:text="${u.email}">E-Mail do Usuário</td>
                         <td th:text="${#dates.format(u.dtCadastro, 'dd/MM/yyyy')}">01/01/2026</td>
+                        <td style="text-align: end;">
+                            <a th:href="${'/usuario/detalhar?cdUsuario=' + u.cdUsuario}">Detalhar</a> |
+                            <a th:href="${'/usuario/alterar?cdUsuario=' + u.cdUsuario}">Alterar</a> |
+                            <a th:href="${'/usuario/excluir?cdUsuario=' + u.cdUsuario}">Excluir</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
             <footer class="pt-4 my-md-5 pt-md-5 border-top">
                 <div style="display: flex; justify-content: center; align-items: center; gap: 15%;">
-                    <button type="button" class="btn-primary btn " onclick="exibirDelhamento()">Detalhar</button>
                     <button type="button" class="btn-primary btn " onclick="window.location.href='/usuario/cadastro'">Incluir</button>
-                    <button type="button" class="btn-primary btn " onclick="exibirAlteracao()">Alterar</button>
-                    <button type="button" class="btn-primary btn " onclick="exibirExclusao()">Excluir</button>
                 </div>
             </footer>
         </div>
-    </div>
-    <div>
-        
     </div>
     </main>
   </body>
