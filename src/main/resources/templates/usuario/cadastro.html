@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Desafio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:src="@{/js/util.js}"></script>
     <script>
         function confirmar(){
 
             if(document.getElementById("nmUsuario").value == ''){
-                alert()
+                exibirMensagem("O campo nome é obrigatorio!")
                 return;
             }
 
             if(document.getElementById("email").value == ''){
-                alert()
+                exibirMensagem("O campo e-mail é obrigatorio!")
                 return;
             }
 
@@ -101,15 +102,15 @@
             <form id="formulario">
                 <div  class="input-group"  th:if="${alteracao}">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Código</span>
-                    <input id="cdUsuario"  th:value="${usuario != null ? usuario.cdUsuario : ''}" name="cdUsuario" readonly type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
+                    <input id="cdUsuario" required  th:value="${usuario != null ? usuario.cdUsuario : ''}" name="cdUsuario" readonly type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
                 <div  class="input-group">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Nome</span>
-                    <input id="nmUsuario"  th:value="${usuario != null ? usuario.nmUsuario : ''}" name="nmUsuario" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                    <input id="nmUsuario" required th:value="${usuario != null ? usuario.nmUsuario : ''}" name="nmUsuario" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
                 <div  class="input-group">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">E-Mail</span>
-                    <input id="email" name="email"  th:value="${usuario != null ? usuario.email : ''}" type="email" class="form-control" aria-describedby="inputGroup-sizing-default">
+                    <input id="email" name="email" required th:value="${usuario != null ? usuario.email : ''}" type="email" class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
                 <br>
                 <footer class="pt-4 my-md-5 pt-md-5 border-top">

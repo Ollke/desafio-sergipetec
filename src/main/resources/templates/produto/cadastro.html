@@ -5,17 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Desafio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:src="@{/js/util.js}"></script>
     <script>
         function confirmar(){
 
             if(document.getElementById("nmProduto").value == ''){
-                alert()
+                exibirMensagem("O campo nome é obrigatorio!")
                 return;
             }
 
             if(document.getElementById("dsProduto").value == ''){
-                alert()
+                exibirMensagem("O campo descrição é obrigatorio!")
+                return;
+            }
+
+            if(document.getElementById("qtProduto").value == ''){
+                exibirMensagem("O campo quantidade é obrigatorio!")
+                return;
+            }
+
+            if(document.getElementById("vlProduto").value == ''){
+                exibirMensagem("O campo valor é obrigatorio!")
                 return;
             }
 
@@ -101,29 +112,29 @@
             <form id="formulario" method="post" th:action="${alteracao? '/produto/alterar' : '/produto/cadastro'}">
                 <div  class="input-group"  th:if="${alteracao}">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Código</span>
-                    <input id="cdProduto"  th:value="${produto != null ? produto.id.cdProduto : ''}" name="cdProduto" readonly type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
+                    <input id="cdProduto" required  th:value="${produto != null ? produto.id.cdProduto : ''}" name="cdProduto" readonly type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
                 <div  class="input-group">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Nome</span>
-                    <input id="nmProduto"  th:value="${produto != null ? produto.nmProduto : ''}" name="nmProduto" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                    <input id="nmProduto" required th:value="${produto != null ? produto.nmProduto : ''}" name="nmProduto" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
                 <div  class="input-group">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Descrição</span>
-                    <textarea id="dsProduto" name="dsProduto"  th:text="${produto != null ? produto.dsProduto : ''}" type="text" class="form-control" aria-describedby="inputGroup-sizing-default"></textarea>
+                    <textarea id="dsProduto" required name="dsProduto"  th:text="${produto != null ? produto.dsProduto : ''}" type="text" class="form-control" aria-describedby="inputGroup-sizing-default"></textarea>
                 </div>
                 <div  class="input-group">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Quantidade</span>
-                    <input id="qtProduto" name="qtProduto"  th:value="${produto != null ? produto.qtProduto : ''}" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                    <input id="qtProduto" required name="qtProduto"  th:value="${produto != null ? produto.qtProduto : ''}" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
                 <div  class="input-group">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Valor</span>
-                    <input id="vlProduto" name="vlProduto"  th:value="${produto != null ? produto.vlProduto : ''}" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                    <input id="vlProduto" required name="vlProduto"  th:value="${produto != null ? produto.vlProduto : ''}" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
                 <br>
                 <footer class="pt-4 my-md-5 pt-md-5 border-top">
                     <div style="display: flex; justify-content: center; align-items: center; gap: 15%;">
                         <button type="button" class="btn-primary btn " onclick="window.location.href='/produto'">Desistir</button>
-                        <button type="submit" class="btn-primary btn ">Confirmar</button>
+                        <button type="button" class="btn-primary btn " onclick="confirmar()">Confirmar</button>
                     </div>
                 </footer>
             </form>
