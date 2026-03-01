@@ -2,6 +2,8 @@ package com.desafio.controller;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +50,13 @@ public class PedidoController {
             mv.addObject("auxiliar", auxiliar);
 
         List<Pedido> consulta = repository.consultar(new PedidoFilter());
+
+        int anoAtual = LocalDate.now().getYear();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         mv.addObject("pedidos", consulta);
+        mv.addObject("dtInicio", LocalDate.of(anoAtual, 1, 1).format(formatter));
+        mv.addObject("dtFim", LocalDate.of(anoAtual, 12, 31).format(formatter));
         
         return mv;
     }
@@ -79,6 +87,16 @@ public class PedidoController {
         if(formulario.containsKey("tpOrdenacao") && !(formulario.getFirst("tpOrdenacao")).isEmpty()){
             filtro.setTpOrdenacao(formulario.getFirst("tpOrdenacao"));
             mv.addObject("tpOrdenacao", formulario.getFirst("tpOrdenacao"));
+        }  
+        
+        if(formulario.containsKey("dtInicio") && !(formulario.getFirst("dtInicio")).isEmpty()){
+            filtro.setDtInicio(Date.valueOf(formulario.getFirst("dtInicio")));
+            mv.addObject("dtInicio", formulario.getFirst("dtInicio"));
+        }  
+        
+        if(formulario.containsKey("dtFim") && !(formulario.getFirst("dtFim")).isEmpty()){
+            filtro.setDtFim(Date.valueOf(formulario.getFirst("dtFim")));
+            mv.addObject("dtFim", formulario.getFirst("dtFim"));
         }  
 
         List<Pedido> consulta = repository.consultar(filtro);

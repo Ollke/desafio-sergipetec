@@ -40,6 +40,10 @@ public class PedidoRepositoryImpl implements PedidoRepository {
             filtroStr.append(conexao + " 0 <> (SELECT COUNT(*) FROM PEDIDO_DETALHE WHERE PEDIDO.PEDIDO_CD = PEDIDO_DETALHE.PEDIDO_CD AND PEDIDO_DETALHE.PRODUTO_CD = :cdProduto) ");
             conexao = "AND";
         }
+        if (filter.isDtInicioAlterado() && filter.isDtFimAlterado()) {
+            filtroStr.append(conexao + " PEDIDO.CADASTRO_DT BETWEEN :dtInicio AND :dtFim ");
+            conexao = "AND";
+        }
 
         if(!conexao.isEmpty()) sql.append(filtroStr);
         sql.append(" ORDER BY " + filter.getOrdencao());
@@ -49,6 +53,10 @@ public class PedidoRepositoryImpl implements PedidoRepository {
         if (filter.isCdPedidoAlterado()) query.setParameter("cdPedido", filter.getCdPedido());
         if (filter.isCdUsuarioAlterado()) query.setParameter("cdUsuario", filter.getCdUsuario());
         if (filter.isCdProdutoAlterado()) query.setParameter("cdProduto", filter.getCdProduto());
+        if (filter.isDtInicioAlterado() && filter.isDtFimAlterado()) {
+            query.setParameter("dtInicio", filter.getDtInicio());
+            query.setParameter("dtFim", filter.getDtFim());
+        }
 
         return query.getResultList();
     }
@@ -72,10 +80,11 @@ public class PedidoRepositoryImpl implements PedidoRepository {
     @Override
     @Transactional
     public void incluir(Pedido pedido){
-        StringBuilder sql = new StringBuilder("INSERT INTO PEDIDO (CADASTRO_DT, PEDIDO_VL, TOTAL_VL, DESCONTO_PC, USUARIO_CD) VALUES (CURRENT_TIMESTAMP, :vlPedido, :vlTotal, :pcDesconto, :cdUsuario);");
+        StringBuilder sql = new StringBuilder("INSERT INTO PEDIDO (CADASTRO_DT, PEDIDO_VL, TOTAL_VL, DESCONTO_PC, USUARIO_CD) VALUES (:dtCadastro, :vlPedido, :vlTotal, :pcDesconto, :cdUsuario);");
 
         Query query = entityManager.createNativeQuery(sql.toString(), Pedido.class);
         
+        query.setParameter("dtCadastro", pedido.getDtCadastro());
         query.setParameter("vlPedido", pedido.getVlPedido());
         query.setParameter("vlTotal", pedido.getVlTotal());
         query.setParameter("pcDesconto", pedido.getPcDesconto());
