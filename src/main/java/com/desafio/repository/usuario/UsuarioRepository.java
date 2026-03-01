@@ -12,5 +12,5 @@ public interface UsuarioRepository {
 
     void alterar(Usuario usuario);
 
-    void excluir(Integer cdUsuario);
+    void excluir(Long cdUsuario);
 }

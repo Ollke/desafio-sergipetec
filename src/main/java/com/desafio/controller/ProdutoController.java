@@ -12,9 +12,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.desafio.entity.Pedido;
 import com.desafio.entity.Produto;
 import com.desafio.entity.ProdutoPK;
+import com.desafio.filter.PedidoFilter;
 import com.desafio.filter.ProdutoFilter;
+import com.desafio.repository.pedido.PedidoRepository;
 import com.desafio.repository.produto.ProdutoRepository;
 import com.desafio.service.ProdutoService;
 
@@ -25,6 +28,8 @@ public class ProdutoController {
     @Autowired
     private ProdutoRepository repository;
     @Autowired
+    private PedidoRepository pedidoRepository;
+    @Autowired
     private ProdutoService service;
 
     private static String htmlConsulta = "produto/consulta";
@@ -32,8 +37,11 @@ public class ProdutoController {
     private static String htmlCadastro = "produto/cadastro";
 
     @GetMapping("")
-    public ModelAndView exibir(Model model) {
+    public ModelAndView exibir(@RequestParam(value = "auxiliar", required = false) String auxiliar) {
         ModelAndView mv = new ModelAndView(htmlConsulta);
+
+        if(auxiliar != null)
+            mv.addObject("auxiliar", auxiliar);
 
         List<Produto> consulta = repository.consultar(new ProdutoFilter());
         mv.addObject("produtos", consulta);
@@ -69,6 +77,10 @@ public class ProdutoController {
         if(formulario.containsKey("tpOrdenacao") && !(formulario.getFirst("tpOrdenacao")).isEmpty()){
             filtro.setTpOrdenacao(formulario.getFirst("tpOrdenacao"));
             mv.addObject("tpOrdenacao", formulario.getFirst("tpOrdenacao"));
+        }      
+        
+        if(formulario.containsKey("auxiliar") && !(formulario.getFirst("auxiliar")).isEmpty()){
+            mv.addObject("auxiliar", formulario.getFirst("auxiliar"));
         }
 
         List<Produto> consulta = repository.consultar(filtro);
@@ -214,6 +226,8 @@ public class ProdutoController {
             throw new RuntimeException("Usuário não encontrado!");
         }
         
+        mv.addObject("pedidos", consultarPedidos(cdProduto));
+        
         mv.addObject("produto", consulta.get(0));
         mv.addObject("exclusao", false);
         return mv;
@@ -228,6 +242,8 @@ public class ProdutoController {
             throw new RuntimeException("Usuário não encontrado!");
         }
         
+        mv.addObject("pedidos", consultarPedidos(cdProduto));
+
         mv.addObject("produto", consulta.get(0));
         mv.addObject("exclusao", true);
         return mv;
@@ -247,9 +263,12 @@ public class ProdutoController {
     }
 
 
-    private ArrayList consultarPedidos(Long cdProduto){
-        ArrayList pedidos = new ArrayList<>();
+    private List<Pedido> consultarPedidos(Long cdProduto){
+        PedidoFilter filtro = new PedidoFilter();
+        filtro.setCdProduto(cdProduto);
 
-        return pedidos;
+        List<Pedido> consulta = pedidoRepository.consultar(filtro);
+
+        return consulta;
     }
 }

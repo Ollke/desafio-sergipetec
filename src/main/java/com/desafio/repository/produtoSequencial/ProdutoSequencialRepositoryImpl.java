@@ -1,9 +1,7 @@
 package com.desafio.repository.produtoSequencial;
 
 import java.util.List;
-import java.util.Map;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import com.desafio.entity.ProdutoSequencial;

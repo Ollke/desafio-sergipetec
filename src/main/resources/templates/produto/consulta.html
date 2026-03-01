@@ -52,6 +52,16 @@
             submeterFormulario('/produto/localizar', "POST")
         }
 
+
+        function selecionar(tr) {
+            if (window.opener && !window.opener.closed) {
+                window.opener.trasferirProduto(tr);
+                
+                window.close();
+            } else {
+                alert("A janela principal foi fechada!");
+            }
+        }
     </script>
 </head>
   <body style="height: 100%; width: 100%">
@@ -125,7 +135,7 @@
             <form id="formulario">
             <div  class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Código</span>
-                <input id="cdProduto" name="cdProduto" th:value="${cdProduto}" onchange="limparCodigo()" type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <input id="cdProduto" name="cdProduto" th:value="${cdProduto}" onchange="limparCodigo()" type="number" min = "0"  class="form-control" aria-describedby="inputGroup-sizing-default">
             </div>
             <div  class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Nome</span>
@@ -166,16 +176,19 @@
                         <td th:text="${#dates.format(p.dtCadastro, 'dd/MM/yyyy')}">01/01/2026</td>
                         <td th:text="${p.qtProduto}">Estoque do Produto</td>
                         <td th:text="${p.vlProduto}">Estoque do Produto</td>
-                        <td style="text-align: end;">
+                        <td style="text-align: end;" th:if="${auxiliar == null}">
                             <a th:href="${'/produto/detalhar?cdProduto=' + p.id.cdProduto}">Detalhar</a> |
                             <a th:href="${'/produto/alterar?cdProduto=' + p.id.cdProduto}">Alterar</a> |
                             <a th:href="${'/produto/excluir?cdProduto=' + p.id.cdProduto}">Excluir</a>
+                        </td>
+                        <td style="text-align: end;" th:if="${auxiliar != null}">
+                            <a href="#" onclick="selecionar(this.closest('tr'))">Selecionar</a>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <footer class="pt-4 my-md-5 pt-md-5 border-top">
-                <div style="display: flex; justify-content: center; align-items: center; gap: 15%;">
+                <div style="display: flex; justify-content: center; align-items: center; gap: 15%;" th:if="${auxiliar == null}">
                     <button type="button" class="btn-primary btn " onclick="window.location.href='/produto/cadastro'">Incluir</button>
                 </div>
             </footer>

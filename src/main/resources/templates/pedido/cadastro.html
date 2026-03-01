@@ -1,0 +1,267 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Desafio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:src="@{/js/util.js}"></script>
+    <script>
+        function confirmar(){
+
+            if(document.getElementById("nmProduto").value == ''){
+                alert()
+                return;
+            }
+
+            if(document.getElementById("dsProduto").value == ''){
+                alert()
+                return;
+            }
+
+            if(document.getElementById("cdProduto") == null)
+                submeterFormulario('/produto/cadastro', "POST")
+            else
+                submeterFormulario('/produto/alterar', "POST")
+        }
+
+        function limparCodigo(pCampo){
+            if(pCampo.value != ''){
+                if(parseInt(pCampo.value) < 1){
+                    pCampo.value = '';
+                }
+            }
+        }
+
+        function trasferirUsuario(linha){
+            document.getElementById("cdUsuario").value = linha.cells[0].innerText;
+            document.getElementById("nmUsuario").value = linha.cells[1].innerText;
+        }
+
+        function trasferirProduto(linha){
+
+            if(parseInt(linha.cells[3].innerText) <= 0){
+                exibirMensagem("O produto escolhido não alcança a quantidade mínima necessária para realizar o pedido")
+                return
+            }
+
+            let produtos = document.getElementById("produtos");
+
+            if(produtos.value != ""){
+                let arrayProduto = produtos.value.split("*")
+                if(arrayProduto.includes(linha.cells[0].innerText)){
+                    exibirMensagem("O produto já faz parte do pedido")
+                    return
+                }
+                document.getElementById("produtos").value = produtos.join("*");
+            }else{
+                document.getElementById("produtos").value = linha.cells[0].innerText;
+            }
+
+            let tabela = document.getElementById("tabelaProdutos");
+
+            let novaLinha = tabela.insertRow(0);
+
+            let cdProduto = novaLinha.insertCell(0);
+            cdProduto.textContent = linha.cells[0].innerText;
+
+            let nmProduto = novaLinha.insertCell(1);
+            nmProduto.textContent = linha.cells[1].innerText;
+
+            let qtProduto = novaLinha.insertCell(2);
+            qtProduto.textContent = linha.cells[3].innerText;
+
+            let vlProduto = novaLinha.insertCell(3);
+            vlProduto.textContent = linha.cells[4].innerText;
+
+            let qtPedido = novaLinha.insertCell(4);
+
+            let inputQtd = document.createElement("input");
+            inputQtd.id = "qtProduto" + linha.cells[0].innerText;
+            inputQtd.name = "qtProduto" + linha.cells[0].innerText;
+            inputQtd.type = "number";
+            inputQtd.value = "0";
+            inputQtd.min = "1";
+            inputQtd.className = "inputGroup-sizing-default";
+
+            inputQtd.onchange = function() {
+                let qtDisponivel = parseInt(this.closest('tr').cells[2].innerText);
+                let qtPedido = parseInt(this.value);
+
+                if(qtPedido > qtDisponivel){
+                    this.value = qtDisponivel;
+                    exibirMensagem("O quantidade máxima para esse produto é " + qtDisponivel)
+                }else{
+                    this.value = qtPedido;
+                }
+                
+                calcularVltotal();
+            };
+
+            qtPedido.appendChild(inputQtd);
+        }
+
+        function calcularVltotal(){
+            let tabela = document.getElementById("tabelaProdutos");
+            let linhas = tabela.querySelectorAll('tr');
+
+            vlTotal = 0
+            for (const linha of linhas){
+                let celulas = linha.querySelectorAll('td');
+                
+                if (celulas.length > 3) {
+                    vlProduto = parseInt(celulas[3].innerText);
+                    qtProduto = parseInt(celulas[4].querySelectorAll('input')[0].value);
+
+                    vlTotal = vlTotal + (vlProduto * qtProduto);
+                }
+            }
+
+            let pcDesconto = parseInt(document.getElementById("pcDesconto").value);
+
+            if(pcDesconto > 0)
+                vlTotal = vlTotal - (vlTotal * (pcDesconto / 100))
+
+            document.getElementById("vlTotal").value = vlTotal
+        }
+    </script>
+</head>
+  <body style="height: 100%; width: 100%">
+    <main class="d-flex flex-nowrap">
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="display: flex; min-height: 100vh; width: 280px;"> <a href="#"
+            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"> <svg
+                class="bi pe-none me-2" width="40" height="32" aria-hidden="true">
+            </svg> <span class="fs-4">Desafio</span> </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item"> 
+                <a href="/" class="nav-link active" aria-current="page">  
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                    <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
+                    </svg>
+                    <svg class="bi pe-none me-2"
+                        width="16" height="16" aria-hidden="true">
+                    </svg>
+                    Home
+                </a> 
+            </li>
+            <li> <a href="/usuario" class="nav-link text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg"  width="16" height="16"  fill="currentColor" class="bi bi-file-person-fill" viewBox="0 0 16 16">
+                    <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2m-1 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-3 4c2.623 0 4.146.826 5 1.755V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-1.245C3.854 11.825 5.377 11 8 11"/>
+                    </svg>
+                    <svg class="bi pe-none me-2" width="16" height="16"
+                        aria-hidden="true">
+                    </svg>
+                    Usuário
+                </a> 
+            </li>
+            <li> <a href="/produto" class="nav-link text-white"> 
+                    <svg xmlns="http://www.w3.org/2000/svg"  width="16" height="16"  fill="currentColor" class="bi bi-file-person-fill" viewBox="0 0 16 16">
+                    <path d="M3.75 0a1 1 0 0 0-.8.4L.1 4.2a.5.5 0 0 0-.1.3V15a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4.5a.5.5 0 0 0-.1-.3L13.05.4a1 1 0 0 0-.8-.4zM15 4.667V5H1v-.333L1.5 4h6V1h1v3h6z"/>
+                    </svg>
+                    <svg class="bi pe-none me-2" width="16" height="16"
+                        aria-hidden="true">
+                    </svg>
+                    Produto
+                </a> 
+            </li>
+            <li> <a href="/pedido" class="nav-link text-white">  
+                    <svg xmlns="http://www.w3.org/2000/svg"  width="16" height="16"  fill="currentColor" class="bi bi-file-person-fill" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                    </svg>
+                    <svg class="bi pe-none me-2" width="16" height="16"
+                        aria-hidden="true">
+                    </svg>
+                    Pedido
+                </a> 
+            </li>
+        </ul>
+    </div>
+    <div class="p-5 mb-4 bg-body-tertiary rounded-3" style="width: 100%">
+        <div class="container-fluid py-5">
+            <h3>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb p-3 bg-body-tertiary rounded-3">
+                        <li class="breadcrumb-item"> <a class="link-body-emphasis fw-semibold text-decoration-none" href="/">
+                            <svg class="bi" width="20" height="20" aria-hidden="true">
+                            <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
+                            </svg>
+                        </a>
+                        <li class="breadcrumb-item" aria-current="page">
+                            Pedidos
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            Cadastro
+                        </li>
+                    </ol>
+                </nav>
+            </h3>
+            <br>
+            <form id="formulario" method="post" action="/pedido/cadastro">
+                <div  class="input-group">
+                    <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Cliente</span>
+                    <input id="cdUsuario" name="cdUsuario" type="number" min = "1" class="form-control" aria-describedby="inputGroup-sizing-default" onchange="limparCodigo(this); document.getElementById('nmUsuario').value=''" style="max-width: 100px;">
+                    <input id="nmUsuario" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                    <span class="input-group-text" id="inputGroup-sizing-default" style="width: 3%;">
+                    <a href="#" onclick="abrirJanelaAuxiliar('/usuario?auxiliar=1')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
+                    </a>
+                    </span>
+                </div>
+                <div  class="input-group">
+                    <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Data</span>
+                    <input id="dtCadastro" name="dtCadastro" type="date" class="form-control" aria-describedby="inputGroup-sizing-default">
+                </div>
+                <br>
+                <h5>Produtos <button class="btn btn-primary float-end" type="button" id="button-addon2" onclick="abrirJanelaAuxiliar('/produto?auxiliar=1')">Selecionar</button></h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th  style="width: 10%;">Código </th>
+                            <th  style="width: 10%;">Nome </th>
+                            <th  style="width: 20%;">Quantidade disponivel</th>
+                            <th  style="width: 30%;">Valor</th>
+                            <th  style="width: 30%;">Quantidade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaProdutos">
+                        <tr>
+                            <td colspan="3"></td>
+                            <td>
+                                <div  class="input-group">
+                                    <span class="input-group-text" id="inputGroup-sizing-default"  style="width: 20%;">Desconto</span> 
+                                    <input id="pcDesconto" name="pcDesconto" type="number" value="0" min = "0" max="100" onchange="calcularVltotal()" class="form-control" aria-describedby="inputGroup-sizing-default">
+                                    <span class="input-group-text" id="inputGroup-sizing-default"  style="width: 9%;">%</span> 
+                                </div>
+                            </td>
+                            <td>
+                                <div  class="input-group">
+                                    <span class="input-group-text" id="inputGroup-sizing-default" style="width: 25%;">Valor Final</span> 
+                                <input id="vlTotal" name="vlTotal" value="0" readonly type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="divHiddenProdutos" style="display: none;">
+                    <input id="produtos" name="produtos" value="" readonly type="texte">
+                </div>
+                <br>
+                <footer class="pt-4 my-md-5 pt-md-5 border-top">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 15%;">
+                        <button type="button" class="btn-primary btn " onclick="window.location.href='/pedido'">Desistir</button>
+                        <button type="submit" class="btn-primary btn ">Confirmar</button>
+                    </div>
+                </footer>
+            </form>
+        </div>
+    </div>
+    <div>
+        
+    </div>
+    </main>
+  </body>
+</html>

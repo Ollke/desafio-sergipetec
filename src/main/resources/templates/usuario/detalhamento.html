@@ -33,6 +33,11 @@
             form.submit();
         }
 
+        function exibirPedido(campo){
+            let caminho = '/pedido/detalhar?cdPedido=' + campo.id
+            abrirJanelaAuxiliar(caminho)
+        }
+
     </script>
 </head>
   <body style="height: 100%; width: 100%">
@@ -126,18 +131,33 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Código </th>
-                        <th>Tipo</th>
-                        <th>Data</th>
-                        <th>Detalhar</th>
+                        <th style="width: 5%;">Código </th>
+                        <th style="width: 10%;">Cadastro</th>
+                        <th style="width: 20%;">Valor Total</th>
+                        <th style="width: 25%;">Desconto</th>
+                        <th style="width: 20%;">Valor Final</th>
+                        <th style="width: 15%; text-align: end;">#</th>
                     </tr>
                 </thead>
                 <tbody id="pedidos">
-                    <tr th:each="u : ${pedidos}">
-                        <td th:text="${u.cdUsuario}">1</td>
-                        <td th:text="${u.nmUsuario}">Retirada</td>
-                        <td th:text="${u.email}">15/02/2026</td>
-                        <td th:text="${u.dtCadastro}"><a href="/pedido/detalhar?codigo=1"> Detalhar</a></td>
+                    <tr scope="row" th:each="p: ${pedidos}">
+                        <td th:text="${p.cdPedido}">1</td>
+                        <td th:text="${#dates.format(p.dtCadastro, 'dd/MM/yyyy')}">01/01/2026</td>
+                        <td th:text="${p.vlPedido}">Estoque do Produto</td>
+                        <td th:text="${p.pcDesconto + '%'}">Estoque do Produto</td>
+                        <td th:text="${p.vlTotal}">Estoque do Produto</td>
+                        <td style="text-align: end;">
+                            <a href="#" onclick="exibirPedido(this)" th:id="${p.cdPedido}">Detalhar</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5"></td>
+                        <td colspan="1">
+                            <div  class="input-group float-end">
+                                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 25%;">Total</span> 
+                                <input id="vlTotal" name="vlTotal" value="0" readonly type="number" th:value="${vlTotal}" class="form-control" aria-describedby="inputGroup-sizing-default">
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>

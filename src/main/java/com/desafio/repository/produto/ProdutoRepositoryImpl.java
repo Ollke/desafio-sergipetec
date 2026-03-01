@@ -40,9 +40,7 @@ public class ProdutoRepositoryImpl implements ProdutoRepository {
             filtroStr.append(conexao + " PRODUTO_DS LIKE :dsProduto ");
         }
 
-        if(!conexao.isEmpty())
-            sql.append(filtroStr);
-
+        sql.append(filtroStr);
         sql.append(" ORDER BY " + filter.getOrdencao());
 
         Query query = entityManager.createNativeQuery(sql.toString(), Produto.class);

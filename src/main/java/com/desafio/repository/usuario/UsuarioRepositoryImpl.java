@@ -80,7 +80,7 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
     
     @Override
     @Transactional
-    public void excluir(Integer cdUsuario){
+    public void excluir(Long cdUsuario){
         StringBuilder sql = new StringBuilder("DELETE FROM USUARIO WHERE USUARIO_CD = :cdUsuario");
 
         Query query = entityManager.createNativeQuery(sql.toString(), Usuario.class);

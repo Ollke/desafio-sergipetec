@@ -1,5 +1,6 @@
 package com.desafio.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.desafio.entity.Pedido;
 import com.desafio.entity.Usuario;
+import com.desafio.filter.PedidoFilter;
 import com.desafio.filter.UsuarioFilter;
+import com.desafio.repository.pedido.PedidoRepository;
 import com.desafio.repository.usuario.UsuarioRepository;
 
 @Controller
@@ -20,14 +24,19 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioRepository repository;
+    @Autowired
+    private PedidoRepository pedidoRepository;
 
     private static String htmlConsulta = "usuario/consulta";
     private static String htmldetalhamento = "usuario/detalhamento";
     private static String htmlCadastro = "usuario/cadastro";
 
     @GetMapping("")
-    public ModelAndView exibir(Model model) {
+    public ModelAndView exibir(@RequestParam(value = "auxiliar", required = false) String auxiliar) {
         ModelAndView mv = new ModelAndView(htmlConsulta);
+
+        if(auxiliar != null)
+            mv.addObject("auxiliar", auxiliar);
 
         List<Usuario> consulta = repository.consultar(new UsuarioFilter());
         mv.addObject("usuarios", consulta);
@@ -41,7 +50,7 @@ public class UsuarioController {
         UsuarioFilter filtro = new UsuarioFilter();
         
         if(formulario.containsKey("cdUsuario") && !(formulario.getFirst("cdUsuario")).isEmpty()){
-            filtro.setCdUsuario(Integer.parseInt(formulario.getFirst("cdUsuario")));
+            filtro.setCdUsuario(Long.parseLong(formulario.getFirst("cdUsuario")));
             mv.addObject("cdUsuario", formulario.getFirst("cdUsuario"));
         }
         
@@ -63,6 +72,10 @@ public class UsuarioController {
         if(formulario.containsKey("tpOrdenacao") && !(formulario.getFirst("tpOrdenacao")).isEmpty()){
             filtro.setTpOrdenacao(formulario.getFirst("tpOrdenacao"));
             mv.addObject("tpOrdenacao", formulario.getFirst("tpOrdenacao"));
+        }      
+        
+        if(formulario.containsKey("auxiliar") && !(formulario.getFirst("auxiliar")).isEmpty()){
+            mv.addObject("auxiliar", formulario.getFirst("auxiliar"));
         }
 
         List<Usuario> consulta = repository.consultar(filtro);
@@ -101,7 +114,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/alterar")
-    public ModelAndView exibirAlteracao(@RequestParam("cdUsuario") Integer cdUsuario) {
+    public ModelAndView exibirAlteracao(@RequestParam("cdUsuario") Long cdUsuario) {
         ModelAndView mv = new ModelAndView(htmlCadastro);
         mv.addObject("alteracao", true);
         
@@ -117,12 +130,12 @@ public class UsuarioController {
 
     @PostMapping(value = "/alterar")
     public String processarAlteracao(@RequestParam MultiValueMap<String, String> formulario) {
-        Integer cdUsuario = null;
+        Long cdUsuario = null;
         String nmUsuario = null;
         String email = null;
         
         if(formulario.containsKey("cdUsuario") && !(formulario.getFirst("cdUsuario")).isEmpty()){
-            cdUsuario = Integer.parseInt(formulario.getFirst("cdUsuario"));
+            cdUsuario = Long.parseLong(formulario.getFirst("cdUsuario"));
         }
         
         if(formulario.containsKey("nmUsuario") && !(formulario.getFirst("nmUsuario")).isEmpty()){
@@ -150,13 +163,22 @@ public class UsuarioController {
     }
 
     @GetMapping("/detalhar")
-    public ModelAndView exibirDetalhamento(@RequestParam("cdUsuario") Integer cdUsuario) {
+    public ModelAndView exibirDetalhamento(@RequestParam("cdUsuario") Long cdUsuario) {
         ModelAndView mv = new ModelAndView(htmldetalhamento);
         
         List<Usuario> consulta = repository.consultar(new UsuarioFilter(cdUsuario));
         if(consulta.isEmpty()){
             throw new RuntimeException("Usuário não encontrado!");
         }
+
+        BigDecimal vlTotal = BigDecimal.ZERO;
+        List<Pedido> pedidos = consultarPedidos(cdUsuario);
+        for(Pedido p:pedidos){
+            vlTotal = vlTotal.add(p.getVlTotal());
+        }
+
+        mv.addObject("pedidos", pedidos);
+        mv.addObject("vlTotal", vlTotal);
         
         mv.addObject("usuario", consulta.get(0));
         mv.addObject("exclusao", false);
@@ -164,7 +186,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/excluir")
-    public ModelAndView exibirExclusao(@RequestParam("cdUsuario") Integer cdUsuario) {
+    public ModelAndView exibirExclusao(@RequestParam("cdUsuario") Long cdUsuario) {
         ModelAndView mv = new ModelAndView(htmldetalhamento);
         
         List<Usuario> consulta = repository.consultar(new UsuarioFilter(cdUsuario));
@@ -172,13 +194,15 @@ public class UsuarioController {
             throw new RuntimeException("Usuário não encontrado!");
         }
         
+        mv.addObject("pedidos", consultarPedidos(cdUsuario));
+
         mv.addObject("usuario", consulta.get(0));
         mv.addObject("exclusao", true);
         return mv;
     }
 
     @PostMapping("/excluir")
-    public String processarExclusao(@RequestParam("cdUsuario") Integer cdUsuario) {
+    public String processarExclusao(@RequestParam("cdUsuario") Long cdUsuario) {
         List<Usuario> consulta = repository.consultar(new UsuarioFilter(cdUsuario));
         if(!consulta.isEmpty()){
             if(consultarPedidos(cdUsuario).isEmpty())
@@ -191,9 +215,12 @@ public class UsuarioController {
     }
 
 
-    private ArrayList consultarPedidos(Integer cdUsuario){
-        ArrayList pedidos = new ArrayList<>();
+    private List<Pedido> consultarPedidos(Long cdUsuario){
+        PedidoFilter filtro = new PedidoFilter();
+        filtro.setCdUsuario(cdUsuario);
 
-        return pedidos;
+        List<Pedido> consulta = pedidoRepository.consultar(filtro);
+
+        return consulta;
     }
 }

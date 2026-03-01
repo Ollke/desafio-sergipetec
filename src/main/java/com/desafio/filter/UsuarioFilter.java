@@ -6,7 +6,7 @@ import lombok.Getter;
 public class UsuarioFilter extends Filter{
 
 
-    private Integer cdUsuario;
+    private Long cdUsuario;
     private String nmUsuario;
     private String email;
 
@@ -21,7 +21,7 @@ public class UsuarioFilter extends Filter{
         setNmAtributoOrdenacao("USUARIO_CD");
         setTpOrdenacao("ASC");
     }
-    public UsuarioFilter(Integer cdUsuario){
+    public UsuarioFilter(Long cdUsuario){
         super(); 
 
         setCdUsuario(cdUsuario);
@@ -29,7 +29,7 @@ public class UsuarioFilter extends Filter{
         setTpOrdenacao("ASC");
     }
     
-    public void setCdUsuario(Integer cdUsuario){
+    public void setCdUsuario(Long cdUsuario){
         this.cdUsuario =  cdUsuario;
         this.cdUsuarioAlterado = true;
     }

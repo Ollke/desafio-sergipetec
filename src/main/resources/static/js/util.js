@@ -9,6 +9,15 @@ function submeterFormulario(caminho, tipo){
     input.value = window.location.href;
 
     form.appendChild(input);
+
+    if (window.opener) {
+        let inputAux = document.createElement('input');
+        inputAux.type = 'hidden';
+        inputAux.name = 'auxiliar';
+        inputAux.value = 's';
+
+        form.appendChild(inputAux);
+    }
     
     try {
         let componentes = Array.from(document.querySelectorAll("input"));

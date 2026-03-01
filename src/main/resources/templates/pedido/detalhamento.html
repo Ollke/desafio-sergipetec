@@ -5,39 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Desafio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:src="@{/js/util.js}"></script>
     <script>
-        function desistir(){
-            
-        }
-        
-        function confirmar(){
-            if(document.getElementById("pedidos").children.length > 0){
-                alert("Não é possível excluir um usuário que possui pedidos cadastrados")
-                return;
-            }
-
-            const dados = {
-                cdProduto: document.getElementById('cdProduto').value
-            };
-            
-            //window.location.href='/produto/excluir?cdProduto=' + document.getElementById("cdProduto").value;
-            
+        function confirmar(){            
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/produto/excluir?cdProduto='+ document.getElementById("cdProduto").value;
-
-            //form.appendChild(document.getElementById("cdProduto"));
+            form.action = '/pedido/excluir?cdPedido='+ document.getElementById("cdPedido").value;
             
             document.body.appendChild(form);
             form.submit();
         }
-
-        function exibirPedido(campo){
-            let caminho = '/pedido/detalhar?cdPedido=' + campo.id
-            abrirJanelaAuxiliar(caminho)
-        }
-
     </script>
 </head>
   <body style="height: 100%; width: 100%">
@@ -48,7 +26,8 @@
             </svg> <span class="fs-4">Desafio</span> </a>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item"> <a href="/" class="nav-link active" aria-current="page"> 
+            <li class="nav-item"> 
+                <a href="/" class="nav-link active" aria-current="page">  
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
                     <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
                     </svg>
@@ -91,7 +70,7 @@
         </ul>
     </div>
     <div class="p-5 mb-4 bg-body-tertiary rounded-3" style="width: 100%">
-        <div class="container-fluid py-5">            
+        <div class="container-fluid py-5">
             <h3>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb p-3 bg-body-tertiary rounded-3">
@@ -100,7 +79,8 @@
                             <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
                             </svg>
                         </a>
-                        <li class="breadcrumb-item "> <a class="link-body-emphasis fw-semibold text-decoration-none" href="/produto">Produtos</a>
+                        <li class="breadcrumb-item" aria-current="page">
+                            Pedidos
                         </li>
                         <li class="breadcrumb-item active" aria-current="page" th:text="${exclusao? 'Exclusão' : 'Detalhamento'}">
                             Detalhamento
@@ -109,67 +89,68 @@
                 </nav>
             </h3>
             <br>
-            <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Código</span>
-                <input id="cdProduto"  th:value="${produto.id.cdProduto}" readonly onchange="limparCodigo()" type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Nome</span>
-                <input id="nmProduto"  th:value="${produto.nmProduto}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Descrição</span>
-                <textarea id="dsProduto"  th:text="${produto.dsProduto}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default"></textarea>
-            </div>
-            <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Quantidade</span>
-                <input id="qtProduto"  th:value="${produto.qtProduto}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Valor</span>
-                <input id="vlProduto"  th:value="${produto.vlProduto}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Cadastro</span>
-                <input id="dtCadastro" th:value="${#dates.format(produto.dtCadastro, 'dd/MM/yyyy')}" readonly type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <br>
-            <br>
-            <h5>Pedidos</h5>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Código </th>
-                        <th>Cadastro</th>
-                        <th>Valor Total</th>
-                        <th>Desconto</th>
-                        <th>Valor Final</th>
-                        <th style="text-align: end;">#</th>
-                    </tr>
-                </thead>
-                <tbody id="pedidos">
-                    <tr scope="row" th:each="p: ${pedidos}">
-                        <td th:text="${p.cdPedido}">1</td>
-                        <td th:text="${#dates.format(p.dtCadastro, 'dd/MM/yyyy')}">01/01/2026</td>
-                        <td th:text="${p.vlPedido}">Estoque do Produto</td>
-                        <td th:text="${p.pcDesconto + '%'}">Estoque do Produto</td>
-                        <td th:text="${p.vlTotal}">Estoque do Produto</td>
-                        <td style="text-align: end;">
-                            <a href="#" onclick="exibirPedido(this)" th:id="${p.cdPedido}">Detalhar</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <br>
-            <footer class="pt-4 my-md-5 pt-md-5 border-top">
-                <div  th:if="${exclusao}" style="display: flex; justify-content: center; align-items: center; gap: 15%;">
-                    <button type="button" class="btn-primary btn " onclick="window.location.href='/produto'">Desistir</button>
-                    <button type="button" class="btn-primary btn " onclick="confirmar()">Confirmar</button>
+            <form id="formulario" method="post" action="/pedido/cadastro">
+                <div  class="input-group">
+                    <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Codigo</span>
+                    <input id="cdPedido" name="cdPedido" th:value="${pedido.cdPedido}" type="number" min = "1" readonly class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
-                <div th:unless="${exclusao}" style="display: flex; justify-content: center; align-items: center;">
-                    <button type="button" class="btn-primary btn " onclick="window.location.href='/produto'">Voltar</button>
+                <div  class="input-group">
+                    <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Cliente</span>
+                    <input id="cdUsuario" name="cdUsuario" th:value="${pedido.cdUsuario}" type="number" min = "1" readonly class="form-control" aria-describedby="inputGroup-sizing-default" style="max-width: 100px;">
+                    <input id="nmUsuario" readonly type="text" th:value="${nmUsuario}" class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
-            </footer>
+                <div  class="input-group">
+                    <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Data</span>
+                    <input id="dtCadastro" name="dtCadastro" type="text" th:value="${#dates.format(pedido.dtCadastro, 'dd/MM/yyyy')}" readonly class="form-control" aria-describedby="inputGroup-sizing-default">
+                </div>
+                <br>
+                <h5>Produtos</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th  style="width: 30%;">Código </th>
+                            <th  style="width: 30%;">Nome </th>
+                            <th  style="width: 40%;">Quantidade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaProdutos">
+                        <tr scope="row" th:each="d: ${detalhes}">
+                            <td th:text="${d.get('produto_cd')}">1</td>
+                            <td th:text="${d.get('produto_nm')}">1</td>
+                            <td th:text="${d.get('produto_qt')}">1</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <div  class="input-group">
+                                    <span class="input-group-text" id="inputGroup-sizing-default" style="width: 20%;">Desconto</span> 
+                                    <input id="pcDesconto" name="pcDesconto" type="number" th:value="${pedido.pcDesconto}" value="0" readonly min = "0" max="100" onchange="calcularVltotal()" class="form-control" aria-describedby="inputGroup-sizing-default">
+                                    <span class="input-group-text" id="inputGroup-sizing-default"  style="width: 9%;">%</span> 
+                                </div>
+                            </td>
+                            <td>
+                                <div  class="input-group">
+                                    <span class="input-group-text" id="inputGroup-sizing-default" style="width: 25%;">Valor Final</span> 
+                                <input id="vlTotal" name="vlTotal" value="0" readonly type="number" th:value="${pedido.vlTotal}" class="form-control" aria-describedby="inputGroup-sizing-default">
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="divHiddenProdutos" style="display: none;">
+                    <input id="produtos" name="produtos" value="" readonly type="texte">
+                </div>
+                <br>
+                <footer class="pt-4 my-md-5 pt-md-5 border-top">
+                    <div  th:if="${exclusao}" style="display: flex; justify-content: center; align-items: center; gap: 15%;">
+                        <button type="button" class="btn-primary btn " onclick="window.location.href='/pedido'">Desistir</button>
+                        <button type="button" class="btn-primary btn " onclick="confirmar()">Confirmar</button>
+                    </div>
+                    <div th:unless="${exclusao}" style="display: flex; justify-content: center; align-items: center;">
+                        <button type="button" class="btn-primary btn " onclick="window.location.href='/pedido'">Voltar</button>
+                    </div>
+                </footer>
+            </form>
         </div>
     </div>
     <div>

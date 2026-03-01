@@ -9,58 +9,23 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:src="@{/js/util.js}"></script>
     <script>
-        function limparCodigo(){
-            let cdUsuario = document.getElementById("cdUsuario").value;
-
-            if(cdUsuario != ''){
-                if(parseInt(cdUsuario) < 1){
-                    document.getElementById("cdUsuario").value = '';
+        function limparCodigo(pCampo){
+            if(pCampo.value != ''){
+                if(parseInt(pCampo.value) < 1){
+                    pCampo.value = '';
                 }
             }
         }
         
-        function exibirDelhamento(){
-            if(!validarRadio("chave_primaria", true)){
-                return;
-            }
-            
-            window.location.href='/usuario/detalhar?cdUsuario=' + document.querySelector('input[name="chave_primaria"]:checked').value;
-        }
-        
         function exibirInclusao(){
-            submeterFormulario('/usuario/cadastro', "GET")
-        }
-        
-        function exibirAlteracao(){
-            if(!validarRadio("chave_primaria", true)){
-                return;
-            }
-
-            window.location.href='/usuario/alterar?cdUsuario=' + document.querySelector('input[name="chave_primaria"]:checked').value;
-        }
-        
-        function exibirExclusao(){
-            if(!validarRadio("chave_primaria", true)){
-                return;
-            }
-
-            window.location.href='/usuario/excluir?cdUsuario=' + document.querySelector('input[name="chave_primaria"]:checked').value;
+            submeterFormulario('/pedido/cadastro', "GET")
         }
 
 
         function localizar(){
-            submeterFormulario('/usuario/localizar', "POST")
+            submeterFormulario('/pedido/localizar', "POST")
         }
 
-        function selecionar(tr) {
-            if (window.opener && !window.opener.closed) {
-                window.opener.trasferirUsuario(tr);
-                
-                window.close();
-            } else {
-                alert("A janela principal foi fechada!");
-            }
-        }
     </script>
 </head>
   <body style="height: 100%; width: 100%">
@@ -125,34 +90,33 @@
                             </svg>
                         </a>
                         <li class="breadcrumb-item active" aria-current="page">
-                            Usuários
+                            Pedidos
                         </li>
                     </ol>
                 </nav>
             </h3>
             <br>
             <form id="formulario">
-            <input id="auxiliar" name="auxiliar" type="hidden" value="true"  th:if="${auxiliar == null}">
-
             <div  class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Código</span>
-                <input id="cdUsuario" name="cdUsuario" th:value="${cdUsuario}" onchange="limparCodigo()" type="number" min = "0" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <input id="cdProduto" name="cdPedido" th:value="${cdPedido}" onchange="limparCodigo(this)" type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
             </div>
             <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Nome</span>
-                <input id="nmUsuario" name="nmUsuario" th:value="${nmUsuario}" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Produto</span>
+                <input id="cdProduto" name="cdProduto" th:value="${cdProduto}" onchange="limparCodigo(this)" type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
             </div>
             <div  class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">E-Mail</span>
-                <input id="email" name="email" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Cliente</span>
+                <input id="cdProduto" name="cdUsuario" th:value="${cdUsuario}" onchange="limparCodigo(this)" type="number" class="form-control" aria-describedby="inputGroup-sizing-default">
             </div>
             <div  class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Ordenação</span>
-                <select name="nmAtributoOrdenacao" class="form-select" aria-label="Default select" style="width: 50%;" >
-                    <option value="USUARIO_CD"  th:selected="${nmAtributoOrdenacao == 'USUARIO_CD'}">Código</option>
-                    <option value="USUARIO_NM" th:selected="${nmAtributoOrdenacao == 'USUARIO_NM'}">Nome</option>
-                    <option value="EMAIL" th:selected="${nmAtributoOrdenacao == 'EMAIL'}">E-Mail</option>
+                <select name="nmAtributoOrdenacao" class="form-select" aria-label="Default select" style="width: 50%;">
+                    <option value="PEDIDO_CD"  th:selected="${nmAtributoOrdenacao == 'PEDIDO_CD'}">Código</option>
+                    <option value="USUARIO_CD" th:selected="${nmAtributoOrdenacao == 'USUARIO_CD'}">Cliente</option>
                     <option value="CADASTRO_DT" th:selected="${nmAtributoOrdenacao == 'CADASTRO_DT'}">Cadastro</option>
+                    <option value="DESCONTO_PC" th:selected="${nmAtributoOrdenacao == 'DESCONTO_PC'}">Valor Total</option>
+                    <option value="TOTAL_VL" th:selected="${nmAtributoOrdenacao == 'TOTAL_VL'}">Desconto</option>
                 </select>
                 <select class="form-select" id="tpOrdenacao" name="tpOrdenacao">
                     <option value="ASC" th:selected="${tpOrdenacao == 'ASC'}">Crescente</option>
@@ -167,35 +131,38 @@
                 <thead>
                     <tr>
                         <th>Código </th>
-                        <th>Nome</th>
-                        <th>E-Mail</th>
+                        <th>Cliente</th>
                         <th>Cadastro</th>
+                        <th>Valor Total</th>
+                        <th>Desconto</th>
+                        <th>Valor Final</th>
                         <th style="text-align: end;">#</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr scope="row" th:each="u: ${usuarios}">
-                        <td th:text="${u.cdUsuario}">1</td>
-                        <td th:text="${u.nmUsuario}">Nome do Usuário</td>
-                        <td th:text="${u.email}">E-Mail do Usuário</td>
-                        <td th:text="${#dates.format(u.dtCadastro, 'dd/MM/yyyy')}">01/01/2026</td>
-                        <td style="text-align: end;" th:if="${auxiliar == null}">
-                            <a th:href="${'/usuario/detalhar?cdUsuario=' + u.cdUsuario}">Detalhar</a> |
-                            <a th:href="${'/usuario/alterar?cdUsuario=' + u.cdUsuario}">Alterar</a> |
-                            <a th:href="${'/usuario/excluir?cdUsuario=' + u.cdUsuario}">Excluir</a>
-                        </td>
-                        <td style="text-align: end;" th:if="${auxiliar != null}">
-                            <a href="#" onclick="selecionar(this.closest('tr'))">Selecionar</a>
+                    <tr scope="row" th:each="p: ${pedidos}">
+                        <td th:text="${p.cdPedido}">1</td>
+                        <td th:text="${p.cdUsuario}">1</td>
+                        <td th:text="${#dates.format(p.dtCadastro, 'dd/MM/yyyy')}">01/01/2026</td>
+                        <td th:text="${p.vlPedido}">Estoque do Produto</td>
+                        <td th:text="${p.pcDesconto + '%'}">Estoque do Produto</td>
+                        <td th:text="${p.vlTotal}">Estoque do Produto</td>
+                        <td style="text-align: end;">
+                            <a th:href="${'/pedido/detalhar?cdPedido=' + p.cdPedido}">Detalhar</a> |
+                            <a th:href="${'/pedido/excluir?cdPedido=' + p.cdPedido}">Excluir</a>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <footer class="pt-4 my-md-5 pt-md-5 border-top">
-                <div style="display: flex; justify-content: center; align-items: center; gap: 15%;" th:if="${auxiliar == null}">
-                    <button type="button" class="btn-primary btn " onclick="window.location.href='/usuario/cadastro'">Incluir</button>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 15%;">
+                    <button type="button" class="btn-primary btn " onclick="window.location.href='/pedido/cadastro'">Incluir</button>
                 </div>
             </footer>
         </div>
+    </div>
+    <div>
+        
     </div>
     </main>
   </body>
