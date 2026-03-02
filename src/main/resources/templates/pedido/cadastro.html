@@ -54,7 +54,8 @@
                     exibirMensagem("O produto já faz parte do pedido")
                     return
                 }
-                document.getElementById("produtos").value = produtos.join("*");
+                arrayProduto.push(linha.cells[0].innerText)
+                document.getElementById("produtos").value = arrayProduto.join("*");
             }else{
                 document.getElementById("produtos").value = linha.cells[0].innerText;
             }

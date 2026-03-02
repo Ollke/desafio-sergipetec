@@ -35,6 +35,7 @@
             else
                 submeterFormulario('/produto/alterar', "POST")
         }
+        
 
     </script>
 </head>
@@ -124,11 +125,11 @@
                 </div>
                 <div  class="input-group">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Quantidade</span>
-                    <input id="qtProduto" required name="qtProduto"  th:value="${produto != null ? produto.qtProduto : ''}" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                    <input id="qtProduto" required name="qtProduto"  th:value="${produto != null ? produto.qtProduto : ''}" type="number" min="1" class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
                 <div  class="input-group">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 8%;">Valor</span>
-                    <input id="vlProduto" required name="vlProduto"  th:value="${produto != null ? produto.vlProduto : ''}" type="text" class="form-control" aria-describedby="inputGroup-sizing-default">
+                    <input id="vlProduto" required name="vlProduto"  th:value="${produto != null ? produto.vlProduto : ''}" type="number" min="1" class="form-control" aria-describedby="inputGroup-sizing-default">
                 </div>
                 <br>
                 <footer class="pt-4 my-md-5 pt-md-5 border-top">
